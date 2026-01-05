@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from starlette.responses import Response
 
 from src.api.deps.auth import AuthContext, require_auth
 from src.api.models.cart import (
@@ -116,10 +117,10 @@ def update_cart_item(
     description="Remove a cart item from the authenticated user's cart.",
     operation_id="delete_cart_item",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_class=None,
+    response_class=Response,
 )
 # PUBLIC_INTERFACE
-def delete_cart_item(item_id: str, ctx: AuthContext = Depends(require_auth)) -> None:
+def delete_cart_item(item_id: str, ctx: AuthContext = Depends(require_auth)) -> Response:
     """Delete a cart item.
 
     Notes:
@@ -129,4 +130,4 @@ def delete_cart_item(item_id: str, ctx: AuthContext = Depends(require_auth)) -> 
     deleted = repo.delete_cart_item(ctx.user_id, item_id)
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart item not found.")
-    return None
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
