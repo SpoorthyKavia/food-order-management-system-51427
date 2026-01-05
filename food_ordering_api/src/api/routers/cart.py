@@ -116,10 +116,15 @@ def update_cart_item(
     description="Remove a cart item from the authenticated user's cart.",
     operation_id="delete_cart_item",
     status_code=status.HTTP_204_NO_CONTENT,
+    response_class=None,
 )
 # PUBLIC_INTERFACE
 def delete_cart_item(item_id: str, ctx: AuthContext = Depends(require_auth)) -> None:
-    """Delete a cart item."""
+    """Delete a cart item.
+
+    Notes:
+        FastAPI enforces that 204 responses must not include a response body.
+    """
     repo = SupabaseRepository()
     deleted = repo.delete_cart_item(ctx.user_id, item_id)
     if not deleted:
